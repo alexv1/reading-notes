@@ -1,0 +1,39 @@
+@charset "utf-8";
+
+/* public css */
+* { padding:0px; margin:0px;}
+html,body{height:100%;background:#fff;font-family:"Microsoft Yahei","宋体","Tahoma",Arial;font-size:12px;color:#333;-webkit-text-size-adjust:none;}
+ul,li { list-style:none;}
+img { border:none;}
+a { text-decoration:none;color:#333;}
+a:hover { text-decoration:underline;}
+a:link,a:visited{ text-decoration:none; }
+
+.cf:before, .cf:after { content: ""; display: table; }
+.cf:after { clear: both; }
+.cf { zoom: 1; }
+
+.ellipsis {word-break: keep-all;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+
+.f_l{float: left;}
+.f_r{float: right;}
+
+.wrap{width:1000px;margin: 0 auto;}
+/* public css */
+
+/* login css */
+.login{ width:100%; height:100%; background:url(img/login_bg_1.jpg) no-repeat; position:absolute;top:0;left:0;}
+.loginContent { width:400px; height:280px; border-radius:5px;background:rgba(0, 0, 0, 0.3) none repeat scroll 0 0 !important;filter:alpha(opacity=30); background:rgba(0, 0, 0, 0.3); position:absolute; left:50%; top:50%; margin:-140px 0 0 -200px;}
+.loginContent h1 { color:#fff; text-align:center; letter-spacing:2px; font-weight:normal; padding-top:32px;}
+.loginContent .loginup,.loginContent .loginpw { width:300px; margin:0 auto; border-bottom:1px solid #685d57; padding:22px 0 2px 0;}
+.loginContent .loginup { background:url(img/username.png) no-repeat 8px 22px;}
+.loginContent .loginpw { background:url(img/password.png) no-repeat 8px 22px;}
+.loginContent .txtUsername,.loginContent .txtPassword { width:260px; height:25px; float:right; background:none; border:none; outline:none; color:#fff;}
+.loginContent .subLogin {width:220px; height:36px; margin:36px auto; text-align:center; line-height:36px; font-size:18px; color:#fff; display:block; border-radius:5px;border:1px solid #46a4da;background:-webkit-linear-gradient(top,#38c1fc,#1695cc); background:-moz-linear-gradient(top,#38c1fc,#1695cc);background:-ms-linear-gradient(top,#38c1fc,#1695cc);background:-o-linear-gradient(top,#38c1fc,#1695cc); outline:none; cursor:pointer;}
+.loginContent .subLogin:active {background:-webkit-linear-gradient(top,#1695cc,#38c1fc); background:-moz-linear-gradient(top,#1695cc,#38c1fc);background:-ms-linear-gradient(top,#1695cc,#38c1fc);background:-o-linear-gradient(top,#1695cc,#38c1fc);}
+.copyRight { width:100%; margin:0 auto; position:absolute; bottom:18px;}
+.copyRight p { color:#fff; font-size:14px; text-align:center;}
+/* login css */
+
+
+
