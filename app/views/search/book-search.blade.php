@@ -98,43 +98,37 @@
                                         豆瓣
                                     </h4>
                                     <h5 class="pull-right">
-                                        @if(!empty($douban_books->books))
-                                        搜索结果：{{count($douban_books->books)}}
+                                        @if(!empty($douban_books))
+                                        搜索结果：{{count($douban_books)}}
                                         @endif
-                                        {{--搜索结果： {{($douban_books->total== 0 ? 0 : 1)}} - {{count($douban_books->books)}} / {{$douban_books->total}}--}}
+                                        <!-- {{--搜索结果： {{($douban_books->total== 0 ? 0 : 1)}} - {{count($douban_books->books)}} / {{$douban_books->total}}--}} -->
                                     </h5>
                                 </div>
                             </header>
                             <div class="panel-body">
                                 <div class="blog-post">
-                                @if(!empty($douban_books->books))
-                                    @foreach($douban_books->books as $data)
-                                        <input type="hidden" id="star_val_{{$data->id}}" value="{{$data->rating->average}}">
+                                @if(!empty($douban_books))
+                                    @foreach($douban_books as $data)
                                         <div class="media">
-                                            <a href="https://book.douban.com/subject/{{$data->id}}" target="_blank" class="pull-left">
-                                                <img src="{{$data->image}}" width="90">
+                                            <a href="{{$data->url}}" target="_blank" class="pull-left">
+                                                <img src="{{$data->pic}}" width="90">
                                             </a>
                                             <div class="media-body">
                                                 <h5 class="media-heading">
-                                                    <a href="https://book.douban.com/subject/{{$data->id}}" target="_blank">{{$data->title}}
-                                                        @if(!empty($data->subtitle))
-                                                            ：{{$data->subtitle}}
-                                                        @endif
-                                                    </a>
+                                                    <a href="{{$data->url}}" target="_blank">{{$data->title}}</a>
                                                 </h5>
                                                 <p>
-                                                @if(count($data->author)>0)
-                                                    {{$data->author[0]}}/
-                                                @endif
-                                                @if($data->publisher=='')
-                                                    {{$data->publisher}}/
-                                                @endif
-                                                {{$data->rating->average}}分
+                                                    @if(!empty($data->author_name))
+                                                      {{$data->author_name}}
+                                                    @endif
                                                 </p>
-                                                <div id="star_view_{{$data->id}}"></div>
                                                 <p>
-                                                    {{$data->pubdate}}<br>
-                                                    <a href="javascript:importDoubanBook({{$data->id}},{{$booklist_id}})">导入</a>
+                                                    @if(!empty($data->year))
+                                                    {{$data->year}}<br>
+                                                    @endif
+                                                    @if($data->type == 'b')
+                                                    <a href="javascript:importDoubanBook({{$data->id}},{{$booklist_id}},'{{$data->url}}', '{{$data->title}}', '{{$data->pic}}', '{{$data->author_name}}')">导入</a>
+                                                    @endif
                                                 </p>
                                             </div>
                                         </div>
@@ -220,13 +214,17 @@
 
     });
 
-    function importDoubanBook(doubanId, booklist_id){
+    function importDoubanBook(doubanId, booklist_id, url, title, pic, author){
 
         $.post(
             "../book/importDoubanBook",
             {
                 douban_id: doubanId,
-                booklist_id: booklist_id
+                booklist_id: booklist_id,
+                url: url,
+                title: title,
+                pic: pic,
+                author: author
             },
             function (data) {
                 var tmp = JSON.parse(data);

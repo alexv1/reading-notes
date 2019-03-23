@@ -35,7 +35,7 @@ class SearchController extends BaseController{
 
         require_once(__DIR__.'/../lib/HttpRequest.php');
         $params = array();
-        $searchUrl = $this->douban_search_url.'?q='.urlencode($q);
+        $searchUrl = $this->douban_search_url.urlencode($q);
         $str = HttpRequest::httpsGet($searchUrl,$params);
         // 产生问题的原因：rate_limit
         Log::info('douban#'.$str);

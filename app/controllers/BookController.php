@@ -562,18 +562,6 @@ class BookController extends BaseController{
 
     }
 
-    public function getBookInDoubanApi($id){
-        require_once(__DIR__.'/../lib/HttpRequest.php');
-        $params = array();
-        $ret = json_decode(HttpRequest::httpsGet($this->douban_book_url.$id,$params));
-        return $ret;
-    }
-
-    public function testApi(){
-        $ret = $this->getBookInDoubanApi(2284311);
-        return json_encode($ret);
-    }
-
     public function doEdit() {
         $input_vals = \Input::All();
         $bid = isset($input_vals['bid']) ? $input_vals['bid'] : '0';
@@ -758,6 +746,13 @@ class BookController extends BaseController{
         $input_vals = \Input::All();
         $doubanId = isset($input_vals['douban_id']) ? $input_vals['douban_id'] : '0';
         $booklistId = isset($input_vals['booklist_id']) ? $input_vals['booklist_id'] : '0';
+
+        $url = isset($input_vals['url']) ? $input_vals['url'] : '';
+        $title = isset($input_vals['title']) ? $input_vals['title'] : '';
+        $pic = isset($input_vals['pic']) ? $input_vals['pic'] : '';
+        $author = isset($input_vals['author']) ? $input_vals['author'] : '';
+
+
         if($doubanId == 0){
             return json_encode(array(
                 'code' => 1
@@ -772,7 +767,7 @@ class BookController extends BaseController{
         $book = $bookDB->getBookByDoubanId($doubanId);
         if(empty($book)){
             DB::beginTransaction();
-            $bookId = $this->saveBookFromDouban($doubanId);
+            $bookId = $this->saveBookFromDouban($doubanId, $url, $title, $pic, $author);
             $this->addUserBook($bookId, $userId);
 
         } else {
@@ -798,30 +793,23 @@ class BookController extends BaseController{
      * @param $name
      * @return mixed
      */
-    private function saveBookFromDouban($douban_id){
-        $ret = $this->getBookInDoubanApi($douban_id);
-        if (!empty($ret)) {
-            $author = '';
-            if(count($ret->author)>0){
-                $author = $ret->author[0];
-            }
-            $bookId = DB::table('book')->insertGetId(array(
-                'bname' => $ret->title,
-                'subtitle' => $ret->subtitle,
-                'author' => $author,
-                'pic_url' => $ret->images->large,
-                'publisher' => $ret->publisher,
-                'dou_id' => $douban_id,
-                'dou_rate' => $ret->rating->average,
-                'share_url' => 'https://book.douban.com/subject/'.$douban_id,
-                'is_deleted' => 0,
-                'fid' => $this->fid_book,
-                'create_time' => date('Y-m-d H:i:s', time())
-            ));
+    private function saveBookFromDouban($douban_id, $url, $title, $pic, $author){
 
-            return $bookId;
-        }
-        return -1;
+        $bookId = DB::table('book')->insertGetId(array(
+            'bname' => $title,
+            'subtitle' => '',
+            'author' => $author,
+            'pic_url' => $pic,
+            'publisher' => '',
+            'dou_id' => $douban_id,
+            'dou_rate' => 0,
+            'share_url' => $url,
+            'is_deleted' => 0,
+            'fid' => $this->fid_book,
+            'create_time' => date('Y-m-d H:i:s', time())
+        ));
+
+        return $bookId;
     }
 
     private function addUserBook($bookId, $userId){

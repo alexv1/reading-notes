@@ -50,7 +50,8 @@ class BaseController extends Controller {
     protected $page_size = 10;
 
     protected $douban_book_url = "https://api.douban.com/v2/book/";
-    protected $douban_search_url = "https://api.douban.com/v2/book/search";
+    #protected $douban_search_url = "https://api.douban.com/v2/book/search";
+    protected $douban_search_url = "https://book.douban.com/j/subject_suggest?q=";
 
     protected $fid_book = 1;
 
