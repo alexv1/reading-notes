@@ -526,33 +526,37 @@ class BookController extends BaseController{
         DB::beginTransaction();
         $bookId = 0;
         $now = date('Y-m-d H:i:s', time());
-        if($doubanId == 0){
-            $bookId = DB::table('book')->insertGetId(array(
-                'bname' => $bname,
-                'dou_id' => $doubanId,
-                'subtitle' => $subtitle,
-                'author' => $author,
-                'pic_url' => $pic_url,
-                'publisher' => $publisher,
-                'dou_rate' => $dou_rate,
-                'is_deleted' => 0,
-                'share_url' => $share_url,
-                'create_time' => $now,
-                'fid' => $this->fid_book,
-                'sid' => $sid,
-                'tid' => $tid
-            ));
-        } else {
-            $bookId = $this->saveBookFromDouban($doubanId, $bname);
-            if($bookId == -1){
-                $bookId = DB::table('book')->insertGetId(array(
-                    'bname' => $bname,
-                    'fid' => $this->fid_book,
-                    'douban_id' => $doubanId,
-                    'create_time' => $now
-                ));
-            }
-        }
+
+        $bookId = DB::table('book')->insertGetId(array(
+            'bname' => $bname,
+            'dou_id' => $doubanId,
+            'subtitle' => $subtitle,
+            'author' => $author,
+            'pic_url' => $pic_url,
+            'publisher' => $publisher,
+            'dou_rate' => $dou_rate,
+            'is_deleted' => 0,
+            'share_url' => $share_url,
+            'create_time' => $now,
+            'fid' => $this->fid_book,
+            'sid' => $sid,
+            'tid' => $tid
+        ));
+
+
+        // if($doubanId == 0){
+            
+        // } else {
+        //     $bookId = $this->saveBookFromDouban($doubanId, $bname);
+        //     if($bookId == -1){
+        //         $bookId = DB::table('book')->insertGetId(array(
+        //             'bname' => $bname,
+        //             'fid' => $this->fid_book,
+        //             'douban_id' => $doubanId,
+        //             'create_time' => $now
+        //         ));
+        //     }
+        // }
         $this->addUserBook($bookId, $userId);
 
         DB::commit();
