@@ -769,8 +769,9 @@ class BookController extends BaseController{
         $bookDB = new Book();
         $booklistDB = new Booklist();
         $book = $bookDB->getBookByDoubanId($doubanId);
+        DB::beginTransaction();
         if(empty($book)){
-            DB::beginTransaction();
+            
             $bookId = $this->saveBookFromDouban($doubanId, $url, $title, $pic, $author);
             $this->addUserBook($bookId, $userId);
 
@@ -779,10 +780,13 @@ class BookController extends BaseController{
         }
         // 书单不为空，才导入
         if($bookId > 0 && $booklistId!=0){
+            // $title = filterTitle($title);
             // 更新booklist
             if($booklistDB->isBookInBooklist($booklistId, $bookId) == false){
                 $booklistDB->addBookInBooklist($booklistId, $bookId);
+                $booklistDB->updateBooklistIntroByTitle($booklistId, $title);
             }
+            
         }
         DB::commit();
         return json_encode(array(

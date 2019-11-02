@@ -110,6 +110,7 @@ class BooklistController extends BaseController{
                 if($bookName == ''){
                     continue;
                 }
+                $bookName = filterTitle($bookName);
                 $bid = $bookDB->getBookIdByName($bookName);
                 if($bid == -1){
                     $bid = $bookDB->getBookIdByNameLike($bookName);
@@ -169,6 +170,7 @@ class BooklistController extends BaseController{
         $bookId = isset($input_vals['book_id']) ? $input_vals['book_id'] : 0;
         $booklistId = isset($input_vals['booklist_id']) ? $input_vals['booklist_id'] : 0;
 
+
         if($bookId > 0 && $booklistId!=0){
             $booklistDB = new Booklist();
             DB::beginTransaction();
@@ -176,6 +178,7 @@ class BooklistController extends BaseController{
             if($booklistDB->isBookInBooklist($booklistId, $bookId) == false){
                 $booklistDB->addBookInBooklist($booklistId, $bookId);
             }
+            $booklistDB->updateBooklistIntro($booklistId, $bookId);
             DB::commit();
         }
 

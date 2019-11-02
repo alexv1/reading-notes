@@ -94,6 +94,35 @@ class Booklist extends Eloquent{
         ));
     }
 
+    public function updateBooklistIntro($booklistId, $bookId){
+        $bookDB = new Book();
+        $book = $bookDB->getBookById($bookId);
+        $bookTitle = $book->bname;
+        $this->updateBooklistIntroByTitle($booklistId, $bookTitle);
+    }
+
+    public function updateBooklistIntroByTitle($booklistId, $title){
+        
+        $booklist = $this->getBooklistById($booklistId);
+        $array = explode('<br>', wrapTextToHtml($booklist->intro));
+        $matchArray = array();
+        foreach($array as $name){
+            # 对中文友好
+            $pos1 = stripos($name, $title);
+            // Log::info($name.'#'.$title.' - '.$pos1);
+            if($pos1 !== false) {
+                array_push($matchArray, $name."   ✔");
+            } else {
+                array_push($matchArray, $name);
+            }
+        }
+
+        DB::table('booklist')->where('id', $booklistId)->update(array(
+            'intro' => join(PHP_EOL, $matchArray)
+        ));
+    }
+
+
     public function detachBookFromBooklist($booklistId, $bookId){
         DB::table('booklist_item')
             ->where('list_id', '=', $booklistId)

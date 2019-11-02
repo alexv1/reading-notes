@@ -297,19 +297,28 @@ if (! function_exists('pinyinSort')) {
 
 if (! function_exists('filterTitle')) {
     function filterTitle($text){
+        $index = strrpos($text, "   ✔");
+        if($index != false){
+            return filterTitle(substr($text, 0, $index));
+        }
         $index = strrpos($text, ":");
         if($index != false){
-            return trim(substr($text, 0, $index));
+            return filterTitle(substr($text, 0, $index));
         }
 
         $index = strrpos($text, "：");
         if($index != false){
-            return trim(substr($text, 0, $index));
+            return filterTitle(substr($text, 0, $index));
         }
-
-        $index = strrpos($text, ".");
-        if($index != false){
-            return trim(substr($text, 0, $index));
+        // 001.xxxxx:xxxx
+        if(preg_match("/^\d+\./", $text)) {
+            $index = strrpos($text, ".");
+            return trim(substr($text, $index + 1));
+        } else {
+            $index = strrpos($text, ".");
+            if($index != false){
+                return trim(substr($text, 0, $index));
+            } 
         }
 
         return $text;
