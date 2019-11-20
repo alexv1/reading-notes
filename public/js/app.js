@@ -36,6 +36,11 @@ function goPage(pageNum, totalPage) {
     $("#pageForm").submit();
 }
 
+function tagPageSubmit(order) {
+    $("#order").val(order);
+    $("#pageForm").submit();
+}
+
 function showPageNumber(currentPage, totalPage) {
     var pageHtml = "";
     var maxNum_new = currentPage > 4 ? 6 : 7 - currentPage;//最大显示页码数

@@ -38,6 +38,9 @@
                                         图书标签
                                     </h4>
                                     <h5 class="pull-right">
+                                        <a href="javascript:tagPageSubmit(0)">书名排序</a>
+                                        <a href="javascript:tagPageSubmit(1)">时间降序</a>
+                                        <a href="javascript:tagPageSubmit(1)">时间升序</a>
                                         搜索结果： {{($page-1)*$page_size + (count($books)== 0 ? 0 : 1)}} - {{($page-1)*$page_size + count($books)}} / {{$list_count}}
                                     </h5>
                                 </div>
@@ -46,6 +49,7 @@
                                 <form id="pageForm" action="../search/tag" method="post">
                                     <input type="hidden" name="p" id="p" value="{{$page}}"/>
                                     <input type="hidden" name="q" id="q" value="{{$q}}"/>
+                                    <input type="hidden" name="order" id="order" value="{{$order}}"/>
                                 </form>
                                 <div class="blog-post">
                                     @foreach($books as $data)

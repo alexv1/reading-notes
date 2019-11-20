@@ -100,11 +100,16 @@ class Book extends Eloquent{
         return $obj->value;
     }
 
-    public function searchBooksByTag($tag, $page, $size){
-        return $this->getUserBookQuery()
-            ->where('tags', 'like', '%'.$tag.'%')
-            ->orderByRaw('convert(`bname` USING gbk) COLLATE gbk_chinese_ci asc')
-            ->orderBy('book.bid', 'desc')
+    public function searchBooksByTag($tag, $page, $order, $size){
+        $q = $this->getUserBookQuery()->where('tags', 'like', '%'.$tag.'%');
+        if ($order == 0) {
+            $q = $q->orderByRaw('convert(`bname` USING gbk) COLLATE gbk_chinese_ci asc');
+        } elseif ($order == 1) {
+            $q = $q->orderBy('user_book.update_time', 'desc');
+        } else {
+            $q = $q->orderBy('user_book.update_time', 'asc');
+        }
+        return $q->orderBy('book.bid', 'desc')
             ->skip(($page - 1) * $size)
             ->take($size)
             ->get();

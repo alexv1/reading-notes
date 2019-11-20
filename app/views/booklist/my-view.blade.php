@@ -155,12 +155,12 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            @if(count($books)>0)
+                                            <!-- @if(count($books)>0)
                                                 <br>
                                                 <br>
                                                 <br>
                                                 <br>
-                                            @endif
+                                            @endif -->
                                         @endif
                                     @endforeach
                                 </div>

@@ -61,11 +61,13 @@ class SearchController extends BaseController{
         $input_vals = \Input::All();
         $q = isset($input_vals['q']) ? $input_vals['q'] : '';
         $p = isset($input_vals['p']) ? $input_vals['p'] : 1;
+        // 0, 书名；1，加入时间
+        $order = isset($input_vals['order']) ? $input_vals['order'] : 0;
 
         $size = $this->page_size;
 
         $bookDB = new Book();
-        $books = $bookDB->searchBooksByTag($q, $p, $size);
+        $books = $bookDB->searchBooksByTag($q, $p, $order, $size);
         $bookCount = $bookDB->searchBooksCountByTag($q);
         $floor = floor($bookCount/$size);
         $pageCount = ($bookCount%$size == 0) ? $floor : ($floor + 1);
@@ -74,6 +76,7 @@ class SearchController extends BaseController{
         return View::make('search.tag-search', array(
             'path' => $this->resourcePath,
             'q' => $q,
+            'order' => $order,
             'books' => $books,
             'list_count' => $bookCount,
             'page' => $p,
