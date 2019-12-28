@@ -497,14 +497,23 @@ class BookController extends BaseController{
         $bookDB = new Book();
         $book = $bookDB->getMyBookById($bid, $userId);
 		
-		if(empty($book->dou_rate) || $book->dou_rate <= 0) {
-			// 补充豆瓣评分
+		// 之前用七牛的OSS
+		$pos = strpos($book->pic_url, 'clouddn.com');
+		if(empty($book->dou_rate) || $book->dou_rate <= 0 || $pos !== false) {
+			// 补充豆瓣评分，图片
 			try {
-				$book->dou_rate = $this->getDoubanDetailRate($book->dou_id);
+				require_once(__DIR__.'/../lib/HttpRequest.php');
+                $params = array();
+                $searchUrl = $this->douban_detail_url.$book->dou_id.'/';
+		        // Log::info('douUrl'.$searchUrl);
+                $html = HttpRequest::httpsGet($searchUrl, $params);
+				$book->dou_rate = $this->getDoubanDetailRate($html);
+				$book->pic_url = $this->getDoubanDetailPic($html);
 			} catch(Exception $e) {
 				Log::info($e->getMessage());
 			}
 		}
+		
 		
         $categoryDB = new Category();
         $secondCategory = $categoryDB->get2ndCategoryByFid($this->fid_book);
@@ -518,17 +527,17 @@ class BookController extends BaseController{
         ));
     }
 	
-	private function getDoubanDetailRate($douId) {
-
-		require_once(__DIR__.'/../lib/HttpRequest.php');
-        $params = array();
-        $searchUrl = $this->douban_detail_url.$douId.'/';
-		// Log::info('douUrl'.$searchUrl);
-        $str = HttpRequest::httpsGet($searchUrl, $params);
-		preg_match('/<strong class=\"ll rating_num \" property=\"v:average\">(.*?)<\/strong>/', $str, $rate);
+	private function getDoubanDetailRate($html) {
+		preg_match('/<strong class=\"ll rating_num \" property=\"v:average\">(.*?)<\/strong>/', $html, $rate);
 		// Log::info('doubanRate#'.json_encode($rate));
 		return trim($rate[1]);
 		
+	}
+
+    private function getDoubanDetailPic($html) {
+		preg_match('/\<img.*?src\=\"(.*?)\"[^>]*style\=\"width: 135px;max-height: 200px;\">/i', $html, $pic);
+		//Log::info("pic#".json_encode($pic));
+		return trim($pic[1]);
 	}
 
     public function doAdd(){
