@@ -496,7 +496,16 @@ class BookController extends BaseController{
         $userId = $this->getLoginUser();
         $bookDB = new Book();
         $book = $bookDB->getMyBookById($bid, $userId);
-
+		
+		if(empty($book->dou_rate) || $book->dou_rate <= 0) {
+			// 补充豆瓣评分
+			try {
+				$book->dou_rate = $this->getDoubanDetailRate($book->dou_id);
+			} catch(Exception $e) {
+				Log::info($e->getMessage());
+			}
+		}
+		
         $categoryDB = new Category();
         $secondCategory = $categoryDB->get2ndCategoryByFid($this->fid_book);
         $thirdCategory = $categoryDB->getChildrenCategoryBySid($book->sid);
@@ -508,6 +517,19 @@ class BookController extends BaseController{
             'book' => $book,
         ));
     }
+	
+	private function getDoubanDetailRate($douId) {
+
+		require_once(__DIR__.'/../lib/HttpRequest.php');
+        $params = array();
+        $searchUrl = $this->douban_detail_url.$douId.'/';
+		// Log::info('douUrl'.$searchUrl);
+        $str = HttpRequest::httpsGet($searchUrl, $params);
+		preg_match('/<strong class=\"ll rating_num \" property=\"v:average\">(.*?)<\/strong>/', $str, $rate);
+		// Log::info('doubanRate#'.json_encode($rate));
+		return trim($rate[1]);
+		
+	}
 
     public function doAdd(){
         $input_vals = \Input::All();

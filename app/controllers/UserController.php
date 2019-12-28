@@ -25,8 +25,8 @@ class UserController extends BaseController {
                 $token['expiresAt']=date("Y-m-d H:i:s",time()+600000);
 
                 $str = base64_encode(json_encode($token));
-                Log::info(json_encode($token));
-                Log::info($str);
+                // Log::info(json_encode($token));
+                // Log::info($str);
 
                 Session::put('backend_token', $str);
 
